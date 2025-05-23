@@ -1,11 +1,14 @@
 package com.genation.blogpessoal.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="tb_postagens")
@@ -22,11 +25,19 @@ public class Postagem {
 
     @Column(length = 1000)
     @NotBlank(message = "O atributo texto é obrigatorio")
-    @Size(min = 10, max = 100, message = "O texto  deve ter no minimo 10 caracteres e no maximo 1000")
+    @Size(min = 10, max = 1000, message = "O texto  deve ter no minimo 10 caracteres e no maximo 1000")
     private String texto;
 
     @UpdateTimestamp
     private LocalDateTime data;
+
+    @ManyToOne
+    @JsonIgnoreProperties("postagem")
+    private Tema tema;
+
+    @ManyToOne
+    @JsonIgnoreProperties("postagem")
+    private Usuario usuario;
 
 
     public long getId() {
@@ -59,5 +70,21 @@ public class Postagem {
 
     public void setData(LocalDateTime data) {
         this.data = data;
+    }
+
+    public Tema getTema() {
+        return tema;
+    }
+
+    public void setTema(Tema tema) {
+        this.tema = tema;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

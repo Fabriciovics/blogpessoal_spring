@@ -2,6 +2,7 @@ package com.genation.blogpessoal.controller;
 
 import com.genation.blogpessoal.model.Postagem;
 import com.genation.blogpessoal.repository.PostagemRepository;
+import com.genation.blogpessoal.repository.TemaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,39 +18,37 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostagemController {
 
-    @Autowired
-    private PostagemRepository postagemRepository;
+    private final PostagemRepository postagemRepository;
+    private final TemaRepository temaRepository;
+
+    public PostagemController(PostagemRepository postagemRepository, TemaRepository temaRepository) {
+        this.postagemRepository = postagemRepository;
+        this.temaRepository = temaRepository;
+    }
 
     @GetMapping
     public ResponseEntity<List<Postagem>> getAll(){
-        //SELECT * FROM db_postagens
         return ResponseEntity.ok(postagemRepository.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Postagem> getById(@PathVariable Long id){
-        return postagemRepository.findById(id)
-                .map(resposta -> ResponseEntity.ok (resposta))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-
-    @GetMapping("/titulo/{titulo}")
-    public ResponseEntity<List<Postagem>> getAllByTitulo(@PathVariable String titulo){
-        return ResponseEntity.ok(postagemRepository.findAllByTituloContainingIgnoreCase(titulo));
-    }
 
     @PostMapping
     public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem){
-        return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+        if(temaRepository.existsById(postagem.getTema().getId())) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"O tema nao exista",null);
     }
 
     @PutMapping
     public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
 
-        if (postagemRepository.existsById(postagem.getId()))
+        if (postagemRepository.existsById(postagem.getId())){
+            if(temaRepository.existsById(postagem.getTema().getId()))
 
-            return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
-
+                return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"O tema nao exista",null);
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
     }
