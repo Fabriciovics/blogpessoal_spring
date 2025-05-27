@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import com.genation.blogpessoal.model.Postagem;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -67,7 +67,6 @@ public class Usuario {
     public String getUsuario() {
         return this.usuario;
     }
-
     public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
