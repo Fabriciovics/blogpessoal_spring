@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.genation.blogpessoal.model.Postagem;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -28,8 +30,9 @@ public class Usuario {
     @NotBlank(message = "O Atributo Nome é Obrigatório!")
     private String nome;
 
-    @NotBlank(message = "O Atributo Usuário é Obrigatório!")
-    @Email(message = "O Atributo Usuário deve ser um email válido!")
+    @Schema(example = "email@email.com.br")
+    @NotNull(message = "O atributo Usuário é Obrigatório!")
+    @Email(message = "O atributo Usuário deve ser um email válido!")
     private String usuario;
 
     @NotBlank(message = "O Atributo Senha é Obrigatório!")
